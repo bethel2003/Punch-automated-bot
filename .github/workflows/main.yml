@@ -1,0 +1,30 @@
+name: Run Python Script
+
+   on:
+     schedule:
+       - cron: "*/10 * * * *"  # Runs every 10 minutes
+     workflow_dispatch:  # Allows manual triggering
+
+   jobs:
+     run-script:
+       runs-on: ubuntu-latest
+
+       steps:
+         - name: Checkout repository
+           uses: actions/checkout@v3
+
+         - name: Set up Python
+           uses: actions/setup-python@v4
+           with:
+             python-version: "3.9"
+
+         - name: Install dependencies
+           run: |
+             pip install -r requirements.txt
+
+         - name: Run script
+           env:
+             SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
+             SENDER_PASSWORD: ${{ secrets.SENDER_PASSWORD }}
+             BLOGGER_EMAIL: ${{ secrets.BLOGGER_EMAIL }}
+           run: python script_name.py
