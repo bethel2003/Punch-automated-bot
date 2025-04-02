@@ -155,9 +155,11 @@ def send_email(subject, body, image_path=None):
         server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
         server.starttls()
         server.login(EMAIL_SENDER, EMAIL_PASSWORD)
-        server.sendmail(EMAIL_SENDER, EMAIL_RECIPIENT, msg.as_string())
-        server.quit()
 
+        # ✅ FIXED: Ensure msg is properly encoded before sending
+        server.sendmail(EMAIL_SENDER, EMAIL_RECIPIENT, msg.as_string().encode("utf-8"))
+        
+        server.quit()
         print("✅ Email sent successfully!")
 
     except Exception as e:
