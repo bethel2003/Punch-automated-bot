@@ -142,8 +142,10 @@ def send_email(subject, body, image_path=None):
         msg["To"] = EMAIL_RECIPIENT
         msg["Subject"] = subject
 
+        # Attach email body
         msg.attach(MIMEText(body, "plain"))
 
+        # Attach image if available
         if image_path:
             with open(image_path, "rb") as attachment:
                 part = MIMEBase("application", "octet-stream")
@@ -152,19 +154,19 @@ def send_email(subject, body, image_path=None):
                 part.add_header("Content-Disposition", f"attachment; filename={os.path.basename(image_path)}")
                 msg.attach(part)
 
+        # Set up the SMTP server
         server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
         server.starttls()
         server.login(EMAIL_SENDER, EMAIL_PASSWORD)
 
-        # ✅ FIXED: Ensure msg is properly encoded before sending
-        server.sendmail(EMAIL_SENDER, EMAIL_RECIPIENT, msg.as_string().encode("utf-8"))
-        
+        # ✅ FIXED: Send the email with msg.as_string() (no extra encoding needed)
+        server.sendmail(EMAIL_SENDER, EMAIL_RECIPIENT, msg.as_string())
+
         server.quit()
         print("✅ Email sent successfully!")
 
     except Exception as e:
         print(f"❌ Error sending email: {e}")
-
 
 # ==============================
 # ✅ MAIN EXECUTION
